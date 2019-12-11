@@ -1,0 +1,97 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/03/a/PC.hdl
+
+/**
+ * A 16-bit counter with load and reset control bits.
+ * if      (reset[t] == 1) out[t+1] = 0
+ * else if (load[t] == 1)  out[t+1] = in[t]
+ * else if (inc[t] == 1)   out[t+1] = out[t] + 1  (integer addition)
+ * else                    out[t+1] = out[t]
+ */
+
+CHIP PC {
+    IN in[16],load,inc,reset;
+    OUT out[16];
+
+    PARTS:
+    // Put your code here:
+
+    /**
+     * 1. Start from the inner-most condition: `else out(t)=out(t-1)`.
+     *
+     *      Register(in = ?, load = false, out = out);
+     *
+     * 2. The outer condition, `else if inc(t-1) then out(t)=out(t-1)+1`,
+     *    indicates two things:
+     *
+     *    + The `Register.load` pin depends on `PC.inc`.
+     *    + We need to rewire `out(t-1)` back to `Register.in`.
+     *
+     *  Here is the updated script.
+     *
+     *      Register(in = c0, load = inc, out = out);
+     *      Register(in = c0, load = inc, out = loop);
+     *
+     *      Mux16(a = loop, b = c1, sel = inc, out = c0);
+     *      Inc16(in = loop, out = c1);
+     *
+     * 3. The third condition, `else if load(t-1) then out(t)=in(t-1)`,
+     *    shows us that:
+     *
+     *    + The `Register.load` pin depends on both `PC.inc` & `PC.load`.
+     *    + The value for `Register.in` might be `c0` or `PC.in`.
+     *
+     * First, let's link `Register.load` to an undefined pin: `rload`.
+     *
+     *      Register(in = c0, load = rload, out = out);
+     *      Register(in = c0, load = rload, out = loop);
+     *
+     * Second, we'd like to keep `Register.in` unchanged. And the increment part
+     * should outputs to another pin: `c2`.
+     *
+     *      Mux16(a = loop, b = c1, sel = inc, out = c2);
+     *
+     * Third, let's make a selection between `c2` & `PC.in`.
+     *
+     *      Mux16(a = c2, b = in, sel = load, out = c0);
+     *
+     * 4. Now let's consider the outer-most condition,
+     *    `If reset(t-1) then out(t)=0`.
+     *
+     *    + The `Register.load` pin depends on `PC.inc`, `PC.load` & `PC.reset`.
+     *    + The value for `Register.in` might be `c0` or `false`, if `reset` is
+     *      `true`.
+     *
+     * Similarly, let's rewrite the selection part's `out` pin:
+     *
+     *      Mux16(a = c2, b = in, sel = load, out = c3);
+     *
+     * And make yet another selection based on `reset`:
+     *
+     *      Mux16(a = c3, b = false, sel = reset, out = c0);
+     *
+     * 5. The last step is to implement `Register.load`: `rload`. Note that
+     *    `rload` depends on `PC.inc`, `PC.load` & `PC.reset`. Just write
+     *    a truth table with three inputs and one output, and it turns out that
+     *    we can use two Or chips to set the value for `rload`.
+     *
+     *      Or(a = load, b = reset, out = rl0);
+     *      Or(a = rl0, b = inc, out = rload);
+     *
+     * Below is the recipe for a simple Counter chip. :)
+     */
+
+    Register(in = c0, load = rload, out = out);
+    Register(in = c0, load = rload, out = loop);
+
+    Or(a = load, b = reset, out = rl0);
+    Or(a = rl0, b = inc, out = rload);
+
+    Mux16(a = loop, b = c1, sel = inc, out = c2);
+    Inc16(in = loop, out = c1);
+
+    Mux16(a = c2, b = in, sel = load, out = c3);
+    Mux16(a = c3, b = false, sel = reset, out = c0);
+}
