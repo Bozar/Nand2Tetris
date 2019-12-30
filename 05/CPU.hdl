@@ -41,8 +41,44 @@ CHIP CPU {
     PARTS:
     // Put your code here:
 
-    // Chip: PC.
-    // Internal pins: outAReg, outALUload.
-    PC(in = outAReg, inc = true, load = outALUload, reset = reset,
-        out[0..14] = pc);
+    /**
+     * Chip: PC.
+     * Internal pins: outAReg, c0.
+     */
+    PC
+    (
+        in = outAReg, inc = true, load = c0, reset = reset,
+        out[0..14] = pc
+    );
+
+    /**
+     * Chip: ALU.
+     * Internal pins:
+     *  inALUx, inALUy,
+     *  inALUzx, inALUnx, inALUzy, inALUny, inALUf, inALUno,
+     *  outALUzr, outALUValue.
+     */
+    ALU
+    (
+        x = inALUx, y = inALUy,
+        zx = inALUzx, nx = inALUnx, zy = inALUzy, ny = inALUny,
+        f = inALUf, no = inALUno,
+        zr = outALUzr, out = outALUValue
+    );
+    Not16(in = outALUzr, out = c0);
+    And16
+    (
+        a = outALUValue,
+        b[0] = true, b[1] = true, b[2] = true, b[3] = true,
+        b[4] = true, b[5] = true, b[6] = true, b[7] = true,
+        b[8] = true, b[9] = true, b[10] = true, b[11] = true,
+        b[12] = true, b[13] = true, b[14] = true, b[15] = true,
+        out = outM
+    );
+
+    /**
+     * Chip: DRegister.
+     * Internal pins: inDRload.
+     */
+    Register(in = outALUValue, load = inDRload, out = inALUx);
 }
