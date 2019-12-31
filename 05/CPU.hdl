@@ -43,42 +43,61 @@ CHIP CPU {
 
     /**
      * Chip: PC.
-     * Internal pins: outAReg, c0.
+     * Internal pins: outAReg, loadPC = Not(ALU.zr).
      */
     PC
     (
-        in = outAReg, inc = true, load = c0, reset = reset,
+        in = outAReg, inc = true, load = loadPC, reset = reset,
         out[0..14] = pc
     );
 
     /**
      * Chip: ALU.
      * Internal pins:
-     *  inALUx, inALUy,
-     *  inALUzx, inALUnx, inALUzy, inALUny, inALUf, inALUno,
-     *  outALUzr, outALUValue.
+     *      outDReg, outAMMux,
+     *      cInsC1, cInsC2, cInsC3, cInsC4, cInsC5, cInsC6,
+     *      outALUzr, outALUvalue, c0.
      */
     ALU
     (
-        x = inALUx, y = inALUy,
-        zx = inALUzx, nx = inALUnx, zy = inALUzy, ny = inALUny,
-        f = inALUf, no = inALUno,
-        zr = outALUzr, out = outALUValue
+        x = outDReg, y = outAMMux,
+        zx = cInsC1, nx = cInsC2, zy = cInsC3, ny = cInsC4,
+        f = cInsC5, no = cInsC6,
+        zr = outALUzr, out = outALUvalue
     );
-    Not16(in = outALUzr, out = c0);
-    And16
-    (
-        a = outALUValue,
-        b[0] = true, b[1] = true, b[2] = true, b[3] = true,
-        b[4] = true, b[5] = true, b[6] = true, b[7] = true,
-        b[8] = true, b[9] = true, b[10] = true, b[11] = true,
-        b[12] = true, b[13] = true, b[14] = true, b[15] = true,
-        out = outM
-    );
+    Not16(in = outALUzr, out = loadPC);
+    Not16(in = outALUvalue, out = c0);
+    Not16(in = c0, out = outM);
 
     /**
      * Chip: DRegister.
-     * Internal pins: inDRload.
+     * Internal pins: cInsD2.
      */
-    Register(in = outALUValue, load = inDRload, out = inALUx);
+    Register(in = outALUvalue, load = cInsD2, out = outDReg);
+
+    /**
+     * Chip: AMMux.
+     * Internal pins: cInsA.
+     */
+    Mux16(a = outAReg, b = inM, sel = cInsA, out = outAMMux);
+
+    /**
+     * Chip: ARegister.
+     * Internal pins: outALUinsMux, loadAReg, ins0, cInsD1, c1.
+     */
+    Register(in = outALUinsMux, load = loadAReg, out = outAReg);
+    Not(in = ins0, out = c1);
+    Or(a = c1, b = cInsD1, out = loadAReg);
+
+    /**
+     * Chip: ALUinsMux.
+     * Internal pins: selALUinsMux.
+     */
+    Mux16
+    (
+        a = outALUvalue, b = instruction, sel = selALUinsMux,
+        out = outALUinsMux
+    );
+    Not(in = ins0, out = selALUinsMux);
+
 }
