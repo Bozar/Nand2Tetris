@@ -43,20 +43,21 @@ CHIP CPU {
 
     /**
      * Chip: PC.
-     * Internal pins: outAReg, loadPC = Not(ALU.zr).
+     * Internal pins: outAReg, loadPC, outJump.
      */
     PC
     (
         in = outAReg, inc = true, load = loadPC, reset = reset,
         out[0..14] = pc
     );
+    Mux(a = false, b = outJump, sel = ins0, out = loadPC);
 
     /**
      * Chip: ALU.
      * Internal pins:
      *      outDReg, outAMMux,
      *      cInsC1, cInsC2, cInsC3, cInsC4, cInsC5, cInsC6,
-     *      outALUzr, outALUvalue, c0.
+     *      outALUzr, outALUvalue.
      */
     ALU
     (
@@ -65,9 +66,7 @@ CHIP CPU {
         f = cInsC5, no = cInsC6,
         zr = outALUzr, out = outALUvalue
     );
-    Not16(in = outALUzr, out = loadPC);
-    Not16(in = outALUvalue, out = c0);
-    Not16(in = c0, out = outM);
+    Or16(a = outALUvalue, b = false, out = outM);
 
     /**
      * Chip: DRegister.
@@ -83,11 +82,11 @@ CHIP CPU {
 
     /**
      * Chip: ARegister.
-     * Internal pins: outALUinsMux, loadAReg, ins0, cInsD1, c1.
+     * Internal pins: outALUinsMux, loadAReg, ins0, cInsD1, c0.
      */
     Register(in = outALUinsMux, load = loadAReg, out = outAReg);
-    Not(in = ins0, out = c1);
-    Or(a = c1, b = cInsD1, out = loadAReg);
+    Not(in = ins0, out = c0);
+    Or(a = c0, b = cInsD1, out = loadAReg);
 
     /**
      * Chip: ALUinsMux.
@@ -100,4 +99,36 @@ CHIP CPU {
     );
     Not(in = ins0, out = selALUinsMux);
 
+    /**
+     * External pin: writeM.
+     * Internal pin: cInsD3.
+     */
+    And(a = cInsD3, b = true, out = writeM);
+
+    /**
+     * External pin: addressM.
+     */
+    Or16(a = outAReg, b = false, out[0..14] = addressM);
+
+    /**
+     * External pin: instruction.
+     */
+    Or16
+    (
+        a = instruction, b = false,
+        out[0] = cInsJ3,
+        out[1] = cInsJ2,
+        out[2] = cInsJ1,
+        out[3] = cInsD3,
+        out[4] = cInsD2,
+        out[5] = cInsD1,
+        out[6] = cInsC6,
+        out[7] = cInsC5,
+        out[8] = cInsC4,
+        out[9] = cInsC3,
+        out[10] = cInsC2,
+        out[11] = cInsC1,
+        out[12] = cInsA,
+        out[15] = ins0,
+    );
 }
