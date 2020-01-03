@@ -57,14 +57,14 @@ CHIP CPU {
      * Internal pins:
      *      outDReg, outAMMux,
      *      cInsC1, cInsC2, cInsC3, cInsC4, cInsC5, cInsC6,
-     *      outALUzr, outALUvalue.
+     *      outALUzr, outALUng, outALUvalue.
      */
     ALU
     (
         x = outDReg, y = outAMMux,
         zx = cInsC1, nx = cInsC2, zy = cInsC3, ny = cInsC4,
         f = cInsC5, no = cInsC6,
-        zr = outALUzr, out = outALUvalue
+        zr = outALUzr, ng = outALUng, out = outALUvalue
     );
     Or16(a = outALUvalue, b = false, out = outM);
 
@@ -131,4 +131,46 @@ CHIP CPU {
         out[12] = cInsA,
         out[15] = ins0,
     );
+
+    /**
+     * Handle jump instructions: j1-j2-j3.
+     * Case 1: 0-?-? || 1-?-?.
+     * Internal pins:
+     *      aj1, bj1,
+     *      aj2aj1, bj2aj1,
+     *      aj2bj1, bj2bj1.
+     */
+    Mux(a = aj1, b = bj1, sel = cInsJ1, out = outJump);
+    Mux(a = aj2aj1, b = bj2aj1, sel = cInsJ2, out = aj1);
+    Mux(a = aj2bj1, b = bj2bj1, sel = cInsJ2, out = bj1);
+
+    /**
+     * Case 2: 0-0-0 || 0-0-1.
+     * Internal pins: c1, c2, c3.
+     */
+    Mux(a = false, b = c3, sel = cInsJ3, out = aj2aj1);
+    Not(in = outALUng, out = c1);
+    Not(in = outALUzr, out = c2);
+    And(a = c1, b = c2, out = c3);
+
+    /**
+     * Case 3: 0-1-0 || 0-1-1.
+     * Internal pins: c4.
+     */
+    Mux(a = outALUzr, b = c4, sel = cInsJ3, out = bj2aj1);
+    Not(in = outALUng, out = c4);
+
+    /**
+     * Case 4: 1-0-0 || 1-0-1.
+     * Internal pins: c5.
+     */
+    Mux(a = outALUng, b = c5, sel = cInsJ3, out = aj2bj1);
+    Not(in = outALUzr, out = c5);
+
+    /**
+     * Case 5: 1-1-0 || 1-1-1.
+     * Internal pins: c6.
+     */
+    Mux(a = c6, b = true, sel = cInsJ3, out = bj2bj1);
+    Or(a = outALUzr, b = outALUng, out = c6);
 }
