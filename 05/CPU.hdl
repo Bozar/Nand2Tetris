@@ -73,13 +73,13 @@ CHIP CPU {
 
     /**
      * Chip: DRegister.
-     * Internal pins: cInsD2.
+     * Internal pin: cInsD2.
      */
     DRegister(in = outALUvalue, load = cInsD2, out = outDReg);
 
     /**
      * Chip: AMMux.
-     * Internal pins: cInsA.
+     * Internal pin: cInsA.
      */
     Mux16(a = outAReg, b = inM, sel = cInsA, out = outAMMux);
 
@@ -93,7 +93,7 @@ CHIP CPU {
 
     /**
      * Chip: ALUinsMux.
-     * Internal pins: selALUinsMux.
+     * Internal pin: selALUinsMux.
      */
     Mux16
     (
@@ -104,10 +104,9 @@ CHIP CPU {
 
     /**
      * External pin: writeM.
-     * Internal pin: cInsD3, c7.
+     * Internal pin: cInsD3.
      */
-    And(a = cInsD3, b = true, out = c7);
-    Mux(a = false, b = c7, sel = ins0, out = writeM);
+    And(a = cInsD3, b = true, out = writeM);
 
     /**
      * External pin: addressM.
@@ -177,21 +176,21 @@ CHIP CPU {
 
     /**
      * Case 3: 0-1-0 || 0-1-1.
-     * Internal pins: c4.
+     * Internal pin: c4.
      */
     Mux(a = outALUzr, b = c4, sel = cInsJ3, out = bj2aj1);
     Not(in = outALUng, out = c4);
 
     /**
      * Case 4: 1-0-0 || 1-0-1.
-     * Internal pins: c5.
+     * Internal pin: c5.
      */
     Mux(a = outALUng, b = c5, sel = cInsJ3, out = aj2bj1);
     Not(in = outALUzr, out = c5);
 
     /**
      * Case 5: 1-1-0 || 1-1-1.
-     * Internal pins: c6.
+     * Internal pin: c6.
      */
     Mux(a = c6, b = true, sel = cInsJ3, out = bj2bj1);
     Or(a = outALUzr, b = outALUng, out = c6);
