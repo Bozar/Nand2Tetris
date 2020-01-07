@@ -6,23 +6,23 @@
 /**
  * The Hack CPU (Central Processing unit), consisting of an ALU,
  * two registers named A and D, and a program counter named PC.
- * The CPU is designed to fetch and execute instructions written in 
+ * The CPU is designed to fetch and execute instructions written in
  * the Hack machine language. In particular, functions as follows:
- * Executes the inputted instruction according to the Hack machine 
+ * Executes the inputted instruction according to the Hack machine
  * language specification. The D and A in the language specification
  * refer to CPU-resident registers, while M refers to the external
- * memory location addressed by A, i.e. to Memory[A]. The inM input 
- * holds the value of this location. If the current instruction needs 
- * to write a value to M, the value is placed in outM, the address 
- * of the target location is placed in the addressM output, and the 
- * writeM control bit is asserted. (When writeM==0, any value may 
- * appear in outM). The outM and writeM outputs are combinational: 
- * they are affected instantaneously by the execution of the current 
- * instruction. The addressM and pc outputs are clocked: although they 
- * are affected by the execution of the current instruction, they commit 
- * to their new values only in the next time step. If reset==1 then the 
- * CPU jumps to address 0 (i.e. pc is set to 0 in next time step) rather 
- * than to the address resulting from executing the current instruction. 
+ * memory location addressed by A, i.e. to Memory[A]. The inM input
+ * holds the value of this location. If the current instruction needs
+ * to write a value to M, the value is placed in outM, the address
+ * of the target location is placed in the addressM output, and the
+ * writeM control bit is asserted. (When writeM==0, any value may
+ * appear in outM). The outM and writeM outputs are combinational:
+ * they are affected instantaneously by the execution of the current
+ * instruction. The addressM and pc outputs are clocked: although they
+ * are affected by the execution of the current instruction, they commit
+ * to their new values only in the next time step. If reset==1 then the
+ * CPU jumps to address 0 (i.e. pc is set to 0 in next time step) rather
+ * than to the address resulting from executing the current instruction.
  */
 
 CHIP CPU {
@@ -34,7 +34,7 @@ CHIP CPU {
                          // the current program (reset==0).
 
     OUT outM[16],        // M value output
-        writeM,          // Write to M? 
+        writeM,          // Write to M?
         addressM[15],    // Address in data memory (of M)
         pc[15];          // address of next instruction
 
@@ -42,8 +42,11 @@ CHIP CPU {
     // Put your code here:
 
     /**
+     * Run `CPU.tst` inside `Hardware Simulator`.
+     * http://nand2tetris-questions-and-answers-forum.32033.n3.nabble.com/CPU-external-test-td4025639.html
+     *
      * Chip: PC.
-     * Internal pins: outAReg, loadPC, outJump.
+     * Internal pins: outAReg, loadPC, outJump, ins0.
      */
     PC
     (
@@ -72,7 +75,7 @@ CHIP CPU {
      * Chip: DRegister.
      * Internal pins: cInsD2.
      */
-    Register(in = outALUvalue, load = cInsD2, out = outDReg);
+    DRegister(in = outALUvalue, load = cInsD2, out = outDReg);
 
     /**
      * Chip: AMMux.
@@ -82,9 +85,9 @@ CHIP CPU {
 
     /**
      * Chip: ARegister.
-     * Internal pins: outALUinsMux, loadAReg, ins0, cInsD1, c0.
+     * Internal pins: outALUinsMux, loadAReg, cInsD1, c0.
      */
-    Register(in = outALUinsMux, load = loadAReg, out = outAReg);
+    ARegister(in = outALUinsMux, load = loadAReg, out = outAReg);
     Not(in = ins0, out = c0);
     Or(a = c0, b = cInsD1, out = loadAReg);
 
@@ -101,9 +104,10 @@ CHIP CPU {
 
     /**
      * External pin: writeM.
-     * Internal pin: cInsD3.
+     * Internal pin: cInsD3, c7.
      */
-    And(a = cInsD3, b = true, out = writeM);
+    And(a = cInsD3, b = true, out = c7);
+    Mux(a = false, b = c7, sel = ins0, out = writeM);
 
     /**
      * External pin: addressM.
@@ -113,9 +117,24 @@ CHIP CPU {
     /**
      * External pin: instruction.
      */
-    Or16
+    And16
     (
-        a = instruction, b = false,
+        a = instruction,
+
+        b[0] = ins0,
+        b[1] = ins0,
+        b[2] = ins0,
+        b[3] = ins0,
+        b[4] = ins0,
+        b[5] = ins0,
+        b[6] = ins0,
+        b[7] = ins0,
+        b[8] = ins0,
+        b[9] = ins0,
+        b[10] = ins0,
+        b[11] = ins0,
+        b[12] = ins0,
+
         out[0] = cInsJ3,
         out[1] = cInsJ2,
         out[2] = cInsJ1,
@@ -128,12 +147,15 @@ CHIP CPU {
         out[9] = cInsC3,
         out[10] = cInsC2,
         out[11] = cInsC1,
-        out[12] = cInsA,
-        out[15] = ins0,
+        out[12] = cInsA
     );
+    Or(a = instruction[15], b = false, out = ins0);
 
     /**
      * Handle jump instructions: j1-j2-j3.
+     * Inputs: cInsJ1, cInsJ2, cInsJ3.
+     * Output: outJump.
+     *
      * Case 1: 0-?-? || 1-?-?.
      * Internal pins:
      *      aj1, bj1,
