@@ -3,20 +3,24 @@ import readWriteFile
 
 
 def main():
-    # bin = []
-    # convertToBinary(42, bin)
-    # print(bin)
-
-    # Read tmp/Add.asm. Input `Add.asm` as the first argument.
+    # Folder: tmp/.
+    # First argument: source file name.
+    # Second argument: target file name.
     folder = 'tmp'
-    asmFileName = sys.argv[1]
-    text = readWriteFile.readFile(folder, asmFileName)
+    sourceFile = sys.argv[1]
+    targetFile = sys.argv[2]
+    text = readWriteFile.readFile(folder, sourceFile)
 
-    print(text)
+    output = '\n'
+    output = output.join(text)
+    readWriteFile.writeFile(folder, targetFile, output)
 
 
 # https://stackoverflow.com/questions/22746429/c-decimal-to-binary-converting
 def convertToBinary(decimal, binary):
+    # bin = []
+    # convertToBinary(42, bin)
+    # print(bin)
     if decimal // 2 != 0:
         convertToBinary(decimal // 2, binary)
     binary.append(decimal % 2)
