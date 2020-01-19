@@ -11,9 +11,7 @@ def main():
     targetFile = sys.argv[2]
     text = readWriteFile.readFile(folder, sourceFile)
 
-    output = '\n'
-    output = output.join(text)
-    readWriteFile.writeFile(folder, targetFile, output)
+    readWriteFile.writeFile(folder, targetFile, text)
 
 
 # https://stackoverflow.com/questions/22746429/c-decimal-to-binary-converting

@@ -6,13 +6,16 @@ from pathlib import Path
 def readFile(folder, fileName):
     file = open(Path(sys.path[0], folder) / fileName)
     content = file.read()
-    split = content.split('\n')
     file.close()
 
+    split = content.split('\n')
     return split
 
 
 def writeFile(folder, fileName, content):
+    text = '\n'
+    text = text.join(content)
+
     file = open(Path(sys.path[0], folder) / fileName, 'w')
-    file.write(content)
+    file.write(text)
     file.close
