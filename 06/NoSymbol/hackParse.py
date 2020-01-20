@@ -18,18 +18,18 @@ def _getCommandType(command):
 
 
 def _parseACommand(command, parsed):
-    regA = re.compile(r'^@\s*(\S.*)$')
-    #                        symbol
+    regA = re.compile(r'^@(.*)$')
+    #                     symbol
     parsed.append(regA.sub(r'\1', command))
 
 
 def _parseCCommand(command, parsed):
-    regFull = re.compile(r'^(.*?)\s*=\s*(.*?)\s*;\s*(.*)$')
-    #                       dest    =   comp    ;   jump
-    regNoJump = re.compile(r'^(.*?)\s*=\s*(.*?)$')
-    #                         dest    =   comp
-    regNoDest = re.compile(r'^(.*?)\s*;\s*(.*?)$')
-    #                         comp    ;   jump
+    regFull = re.compile(r'^(.*?)=(.*?);(.*)$')
+    #                       dest =comp ;jump
+    regNoJump = re.compile(r'^(.*?)=(.*?)$')
+    #                         dest =comp
+    regNoDest = re.compile(r'^(.*?);(.*?)$')
+    #                         comp ;jump
 
     if regFull.search(command) != None:
         parsed.append(regFull.sub(r'\1', command))
@@ -46,13 +46,16 @@ def _parseCCommand(command, parsed):
 
 
 def _parseLCommand(command, parsed):
-    regL = re.compile(r'^\(\s*(\S.*?)\s*\)$')
-    #                     (   symbol     )
+    regL = re.compile(r'^\((.*?)\)$')
+    #                     (symbol)
     parsed.append(regL.sub(r'\1', command))
 
 
 # [commandType, symbol], [commandType, dest, comp, jump]
 def parse(command):
+    regSpace = re.compile(r'\s*')
+    command = regSpace.sub('', command)
+
     commandType = _getCommandType(command)
     parsedCommand = [commandType]
 
