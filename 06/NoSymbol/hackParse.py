@@ -24,11 +24,25 @@ def _parseACommand(command, parsed):
 
 
 def _parseCCommand(command, parsed):
-    regL = re.compile(r'^(\S*?)\s*={0,1}\s*(\S*?)\s*;{0,1}\s*(\S*?)$')
-    #                    dest     =        comp     ;        jump
-    parsed.append(regL.sub(r'\1', command))
-    parsed.append(regL.sub(r'\2', command))
-    parsed.append(regL.sub(r'\3', command))
+    regFull = re.compile(r'^(.*?)\s*=\s*(.*?)\s*;\s*(.*)$')
+    #                       dest    =   comp    ;   jump
+    regNoJump = re.compile(r'^(.*?)\s*=\s*(.*?)$')
+    #                         dest    =   comp
+    regNoDest = re.compile(r'^(.*?)\s*;\s*(.*?)$')
+    #                         comp    ;   jump
+
+    if regFull.search(command) != None:
+        parsed.append(regFull.sub(r'\1', command))
+        parsed.append(regFull.sub(r'\2', command))
+        parsed.append(regFull.sub(r'\3', command))
+    elif regNoJump.search(command) != None:
+        parsed.append(regNoJump.sub(r'\1', command))
+        parsed.append(regNoJump.sub(r'\2', command))
+        parsed.append('')
+    else:
+        parsed.append('')
+        parsed.append(regNoDest.sub(r'\1', command))
+        parsed.append(regNoDest.sub(r'\2', command))
 
 
 def _parseLCommand(command, parsed):
@@ -37,6 +51,7 @@ def _parseLCommand(command, parsed):
     parsed.append(regL.sub(r'\1', command))
 
 
+# [commandType, symbol], [commandType, dest, comp, jump]
 def parse(command):
     commandType = _getCommandType(command)
     parsedCommand = [commandType]
