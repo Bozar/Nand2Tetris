@@ -18,7 +18,6 @@ def main():
     targetFile = regExt.sub(r'\1' + targetExtension, sourceFile)
 
     text = readWriteFile.readFile(folder, sourceFile)
-
     text = preProcess.formatText(text)
     # for line in text:
     #     print(hackParse.parse(line))

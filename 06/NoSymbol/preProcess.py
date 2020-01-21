@@ -1,9 +1,9 @@
 import re
 
 
-def _removeHeadTrailSpace(input):
-    headTrailSpace = re.compile(r'^\s*(.*?)\s*$')
-    output = headTrailSpace.sub(r'\1', input)
+def _removeSpace(input):
+    headTrailSpace = re.compile(r'\s*')
+    output = headTrailSpace.sub('', input)
 
     return output
 
@@ -23,7 +23,7 @@ def formatText(input):
     output = []
 
     for line in input:
-        line = _removeHeadTrailSpace(line)
+        line = _removeSpace(line)
         if (_isComment(line) or _isEmpty(line)):
             continue
         else:

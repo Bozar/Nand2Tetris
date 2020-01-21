@@ -53,9 +53,6 @@ def _parseLCommand(command, parsed):
 
 # [commandType, symbol], [commandType, dest, comp, jump]
 def parse(command):
-    regSpace = re.compile(r'\s*')
-    command = regSpace.sub('', command)
-
     commandType = _getCommandType(command)
     parsedCommand = [commandType]
 
