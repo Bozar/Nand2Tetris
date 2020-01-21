@@ -1,6 +1,7 @@
 import re
 import sys
 
+import hackCode
 import hackParse
 import preProcess
 import readWriteFile
@@ -19,20 +20,13 @@ def main():
 
     text = readWriteFile.readFile(folder, sourceFile)
     text = preProcess.formatText(text)
-    # for line in text:
-    #     print(hackParse.parse(line))
+
+    parsedCode = []
+    for i in range(len(text)):
+        parsedCode = hackParse.parse(text[i])
+        text[i] = hackCode.translate(parsedCode)
 
     readWriteFile.writeFile(folder, targetFile, text)
-
-
-# https://stackoverflow.com/questions/22746429/c-decimal-to-binary-converting
-def _convertToBinary(decimal, binary):
-    # bin = []
-    # convertToBinary(42, bin)
-    # print(bin)
-    if decimal // 2 != 0:
-        _convertToBinary(decimal // 2, binary)
-    binary.append(decimal % 2)
 
 
 main()

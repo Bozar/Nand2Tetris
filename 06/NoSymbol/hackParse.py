@@ -1,6 +1,21 @@
 import re
 
 
+# [commandType, symbol], [commandType, dest, comp, jump]
+def parse(command):
+    commandType = _getCommandType(command)
+    parsedCommand = [commandType]
+
+    if commandType == 'A_COMMAND':
+        _parseACommand(command, parsedCommand)
+    elif commandType == 'L_COMMAND':
+        _parseLCommand(command, parsedCommand)
+    elif commandType == 'C_COMMAND':
+        _parseCCommand(command, parsedCommand)
+
+    return parsedCommand
+
+
 def _getCommandType(command):
     typeA = 'A_COMMAND'
     typeC = 'C_COMMAND'
@@ -19,7 +34,7 @@ def _getCommandType(command):
 
 def _parseACommand(command, parsed):
     regA = re.compile(r'^@(.*)$')
-    #                     symbol
+    #                    @symbol
     parsed.append(regA.sub(r'\1', command))
 
 
@@ -49,18 +64,3 @@ def _parseLCommand(command, parsed):
     regL = re.compile(r'^\((.*?)\)$')
     #                     (symbol)
     parsed.append(regL.sub(r'\1', command))
-
-
-# [commandType, symbol], [commandType, dest, comp, jump]
-def parse(command):
-    commandType = _getCommandType(command)
-    parsedCommand = [commandType]
-
-    if commandType == 'A_COMMAND':
-        _parseACommand(command, parsedCommand)
-    elif commandType == 'L_COMMAND':
-        _parseLCommand(command, parsedCommand)
-    elif commandType == 'C_COMMAND':
-        _parseCCommand(command, parsedCommand)
-
-    return parsedCommand

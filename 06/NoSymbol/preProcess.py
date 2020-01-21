@@ -1,6 +1,19 @@
 import re
 
 
+def formatText(input):
+    output = []
+
+    for line in input:
+        line = _removeSpace(line)
+        if (_isComment(line) or _isEmpty(line)):
+            continue
+        else:
+            output.append(line)
+
+    return output
+
+
 def _removeSpace(input):
     headTrailSpace = re.compile(r'\s*')
     output = headTrailSpace.sub('', input)
@@ -17,16 +30,3 @@ def _isComment(input):
 
 def _isEmpty(input):
     return input == ''
-
-
-def formatText(input):
-    output = []
-
-    for line in input:
-        line = _removeSpace(line)
-        if (_isComment(line) or _isEmpty(line)):
-            continue
-        else:
-            output.append(line)
-
-    return output
