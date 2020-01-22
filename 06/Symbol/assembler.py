@@ -3,6 +3,7 @@ import sys
 
 import hackCode
 import hackParse
+import hackSymbolTable
 import preProcess
 import readWriteFile
 
@@ -24,6 +25,7 @@ def main():
     parsedCode = []
     for i in range(len(text)):
         parsedCode = hackParse.parse(text[i])
+        parsedCode = hackSymbolTable.parse(text[i])
         text[i] = hackCode.translate(parsedCode)
 
     readWriteFile.writeFile(folder, targetFile, text)
