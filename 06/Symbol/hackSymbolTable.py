@@ -1,5 +1,5 @@
-def parse(command):
+def parse(assembly, parsedCode):
     typeA = 'A_COMMAND'
     typeL = 'L_COMMAND'
 
-    return command
+    return assembly
