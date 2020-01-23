@@ -18,22 +18,18 @@ def main():
     sourceFile = sys.argv[1]
     targetFile = regExt.sub(r'\1' + targetExtension, sourceFile)
 
-    # Read a source file. Remove comments, spaces and blank lines.
+    # Read a source file.
+    text = []
     text = readWriteFile.readFile(folder, sourceFile)
+    # Remove comments, spaces and blank lines.
     text = preProcess.formatText(text)
-
     # Identify assembly commands.
     parsedCode = []
-    for command in text:
-        parsedCode.append(hackParse.parse(command))
-
+    parsedCode = hackParse.parse(text)
     # Convert symbols to integers.
-    hackSymbolTable.parse(parsedCode)
-
+    parsedCode = hackSymbolTable.parse(parsedCode)
     # Translate assembly commands to binary codes.
-    for i in range(len(text)):
-        text[i] = hackCode.translate(parsedCode[i])
-
+    text = hackCode.translate(parsedCode)
     # Write to a target file.
     readWriteFile.writeFile(folder, targetFile, text)
 

@@ -1,17 +1,25 @@
 import re
 
 
+def parse(text):
+    parsedCode = []
+
+    for line in text:
+        parsedCode.append(_parseSingleLine(line))
+    return parsedCode
+
+
 # [commandType, symbol], [commandType, dest, comp, jump]
-def parse(command):
-    commandType = _getCommandType(command)
+def _parseSingleLine(line):
+    commandType = _getCommandType(line)
     parsedCommand = [commandType]
 
     if commandType == 'A_COMMAND':
-        _parseACommand(command, parsedCommand)
+        _parseACommand(line, parsedCommand)
     elif commandType == 'L_COMMAND':
-        _parseLCommand(command, parsedCommand)
+        _parseLCommand(line, parsedCommand)
     elif commandType == 'C_COMMAND':
-        _parseCCommand(command, parsedCommand)
+        _parseCCommand(line, parsedCommand)
 
     return parsedCommand
 

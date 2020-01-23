@@ -2,12 +2,11 @@ import re
 
 
 def parse(parsedCode):
-    typeA = 'A_COMMAND'
-    typeL = 'L_COMMAND'
     symbolTable = _getPredefinedSymbol()
-
     _addLabelToSymbolTable(parsedCode, symbolTable)
     _parseSymbol(parsedCode, symbolTable)
+
+    return parsedCode
 
 
 def _parseSymbol(parsedCode, symbolTable):
@@ -29,7 +28,6 @@ def _addLabelToSymbolTable(parsedCode, symbolTable):
     for i in range(len(parsedCode)):
         if _isLCommand(parsedCode[i][0]):
             symbolTable[parsedCode[i][1]] = str(lineCount)
-            # symbolTable[parsedCode[i][1]] = str(lineCount + 1)
         else:
             lineCount += 1
 

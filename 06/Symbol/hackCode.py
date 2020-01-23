@@ -2,13 +2,27 @@ import convertNumber
 
 
 def translate(parsedCode):
+    binText = []
+    binCode = ''
+
+    for pc in parsedCode:
+        binCode = _translateSingleCommand(pc)
+        if binCode != None:
+            binText.append(binCode)
+    return binText
+
+
+def _translateSingleCommand(parsedCode):
     typeA = 'A_COMMAND'
     typeC = 'C_COMMAND'
+    typeL = 'L_COMMAND'
 
     if parsedCode[0] == typeA:
         return _getACommand(parsedCode[1])
     elif parsedCode[0] == typeC:
         return _getCCommand(parsedCode[1], parsedCode[2], parsedCode[3])
+    elif parsedCode[0] == typeL:
+        return None
 
 
 def _getACommand(address):
