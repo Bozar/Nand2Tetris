@@ -28,7 +28,7 @@ def main():
         parsedCode.append(hackParse.parse(command))
 
     # Convert symbols to integers.
-    text = hackSymbolTable.parse(text, parsedCode)
+    hackSymbolTable.parse(parsedCode)
 
     # Translate assembly commands to binary codes.
     for i in range(len(text)):
