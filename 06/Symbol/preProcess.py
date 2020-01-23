@@ -6,7 +6,8 @@ def formatText(input):
 
     for line in input:
         line = _removeSpace(line)
-        if (_isComment(line) or _isEmpty(line)):
+        line = _removeComment(line)
+        if _isEmpty(line):
             continue
         else:
             output.append(line)
@@ -21,11 +22,9 @@ def _removeSpace(input):
     return output
 
 
-def _isComment(input):
-    comment = re.compile(r'^//')
-    output = comment.search(input)
-
-    return output != None
+def _removeComment(input):
+    comment = re.compile(r'//.*$')
+    return comment.sub('', input)
 
 
 def _isEmpty(input):
