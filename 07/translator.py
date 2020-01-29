@@ -12,7 +12,7 @@ def main():
     # Argument: source folder name.
     folder = sys.argv[1]
     sourceExtension = 'vm'
-    targetFile = 'assembly.hack'
+    targetFile = 'target.asm'
 
     # Read a source file.
     text = []
