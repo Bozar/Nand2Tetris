@@ -3,6 +3,8 @@ import sys
 
 import preProcess
 import readWriteFile
+import vmCodeWriter
+import vmParser
 
 
 def main():
@@ -17,7 +19,10 @@ def main():
     text = readWriteFile.readFilesInFolder(folder, sourceExtension)
     # Remove comments, spaces and blank lines.
     text = preProcess.formatText(text)
-
+    # Parse file.
+    text = vmParser.parseVMfile(text)
+    # Translate command.
+    text = vmCodeWriter.translateVMCommand(text)
     # Write to a target file.
     readWriteFile.writeFile(folder, targetFile, text)
 
