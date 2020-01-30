@@ -1,3 +1,4 @@
+import os
 import re
 import sys
 
@@ -12,7 +13,10 @@ def main():
     # Argument: source folder name.
     folder = sys.argv[1]
     sourceExtension = 'vm'
-    targetFile = 'target.asm'
+    targetExtension = 'asm'
+    # https://stackoverflow.com/questions/3925096/how-to-get-only-the-last-part-of-a-path-in-python
+    targetFile = os.path.basename(os.path.normpath(folder)) \
+        + '.' + targetExtension
 
     # Read a source file.
     text = []
