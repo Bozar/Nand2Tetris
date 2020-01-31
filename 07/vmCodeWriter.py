@@ -32,7 +32,7 @@ def translateVMCommand(text):
 
 
 # D = y, M = x.
-def _preBinaryArithmetic():
+def _popToDandM():
     return [
         # Decrease stack point by 1.
         '@SP',
@@ -51,7 +51,7 @@ def _preBinaryArithmetic():
 
 
 # D = y.
-def _preUnaryArithmetic():
+def _popToD():
     return [
         # Decrease stack point by 1.
         '@SP',
@@ -64,7 +64,7 @@ def _preUnaryArithmetic():
 
 
 # D = result.
-def _postArithmetic():
+def _pushDtoStack():
     return [
         # Push the result into stack.
         '@SP',
@@ -105,29 +105,29 @@ def _postJump(index):
 
 
 def _not():
-    pre = _preUnaryArithmetic()
-    post = _postArithmetic()
+    pre = _popToD()
+    post = _pushDtoStack()
     middle = ['D=!D']
     return pre + middle + post
 
 
 def _or():
-    pre = _preBinaryArithmetic()
-    post = _postArithmetic()
+    pre = _popToDandM()
+    post = _pushDtoStack()
     middle = ['D=D|M']
     return pre + middle + post
 
 
 def _and():
-    pre = _preBinaryArithmetic()
-    post = _postArithmetic()
+    pre = _popToDandM()
+    post = _pushDtoStack()
     middle = ['D=D&M']
     return pre + middle + post
 
 
 def _lt(index):
-    pre = _preBinaryArithmetic()
-    post = _postArithmetic()
+    pre = _popToDandM()
+    post = _pushDtoStack()
     preJump = _preJump(index)
     postJump = _postJump(index)
     middle = ['D;JLT']
@@ -135,8 +135,8 @@ def _lt(index):
 
 
 def _gt(index):
-    pre = _preBinaryArithmetic()
-    post = _postArithmetic()
+    pre = _popToDandM()
+    post = _pushDtoStack()
     preJump = _preJump(index)
     postJump = _postJump(index)
     middle = ['D;JGT']
@@ -145,8 +145,8 @@ def _gt(index):
 
 # http://nand2tetris-questions-and-answers-forum.32033.n3.nabble.com/translating-eq-to-asm-td4028370.html
 def _eq(index):
-    pre = _preBinaryArithmetic()
-    post = _postArithmetic()
+    pre = _popToDandM()
+    post = _pushDtoStack()
     preJump = _preJump(index)
     postJump = _postJump(index)
     middle = ['D;JEQ']
@@ -154,22 +154,22 @@ def _eq(index):
 
 
 def _neg():
-    pre = _preUnaryArithmetic()
-    post = _postArithmetic()
+    pre = _popToD()
+    post = _pushDtoStack()
     middle = ['D=-D']
     return pre + middle + post
 
 
 def _sub():
-    pre = _preBinaryArithmetic()
-    post = _postArithmetic()
+    pre = _popToDandM()
+    post = _pushDtoStack()
     middle = ['D=M-D']
     return pre + middle + post
 
 
 def _add():
-    pre = _preBinaryArithmetic()
-    post = _postArithmetic()
+    pre = _popToDandM()
+    post = _pushDtoStack()
     middle = ['D=D+M']
     return pre + middle + post
 
