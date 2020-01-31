@@ -76,6 +76,34 @@ def _postArithmetic():
     ]
 
 
+def _preJump(index):
+    return [
+        # Store `x-y` into register D.
+        'D=M-D',
+        # Jump to `TRUE` if D (x-y) is 0.
+        # Add `index`, which is an increasing integer, to the label, so that all
+        # the labels are unique.
+        '@ARITHMETIC_TRUE_' + str(index),
+    ]
+
+
+def _postJump(index):
+    return [
+        # If D (x-y) is not 0, set D (the result) to 0 (false).
+        '@0',
+        'D=A',
+        # Jump to the end of this code block.
+        '@ARITHMETIC_END_' + str(index),
+        '0;JMP',
+        # Set D (the result) to -1 (true).
+        '(ARITHMETIC_TRUE_' + str(index) + ')',
+        '@0',
+        'D=!A',
+        # The end of this code block.
+        '(ARITHMETIC_END_' + str(index) + ')',
+    ]
+
+
 def _not():
     pre = _preUnaryArithmetic()
     post = _postArithmetic()
@@ -100,67 +128,29 @@ def _and():
 def _lt(index):
     pre = _preBinaryArithmetic()
     post = _postArithmetic()
-    middle = [
-        'D=M-D',
-        '@ARITHMETIC_TRUE_' + str(index),
-        'D;JLT',
-        '@0',
-        'D=A',
-        '@ARITHMETIC_END_' + str(index),
-        '0;JMP',
-        '(ARITHMETIC_TRUE_' + str(index) + ')',
-        '@0',
-        'D=!A',
-        '(ARITHMETIC_END_' + str(index) + ')',
-    ]
-    return pre + middle + post
+    preJump = _preJump(index)
+    postJump = _postJump(index)
+    middle = ['D;JLT']
+    return pre + preJump + middle + postJump + post
 
 
 def _gt(index):
     pre = _preBinaryArithmetic()
     post = _postArithmetic()
-    middle = [
-        'D=M-D',
-        '@ARITHMETIC_TRUE_' + str(index),
-        'D;JGT',
-        '@0',
-        'D=A',
-        '@ARITHMETIC_END_' + str(index),
-        '0;JMP',
-        '(ARITHMETIC_TRUE_' + str(index) + ')',
-        '@0',
-        'D=!A',
-        '(ARITHMETIC_END_' + str(index) + ')',
-    ]
-    return pre + middle + post
+    preJump = _preJump(index)
+    postJump = _postJump(index)
+    middle = ['D;JGT']
+    return pre + preJump + middle + postJump + post
 
 
 # http://nand2tetris-questions-and-answers-forum.32033.n3.nabble.com/translating-eq-to-asm-td4028370.html
 def _eq(index):
     pre = _preBinaryArithmetic()
     post = _postArithmetic()
-    middle = [
-        # Store `x-y` into register D.
-        'D=M-D',
-        # Jump to `TRUE` if D (x-y) is 0.
-        # Add `index`, which is an increasing integer, to the label, so that all
-        # the labels are unique.
-        '@ARITHMETIC_TRUE_' + str(index),
-        'D;JEQ',
-        # If D (x-y) is not 0, set D (the result) to 0 (false).
-        '@0',
-        'D=A',
-        # Jump to the end of this code block.
-        '@ARITHMETIC_END_' + str(index),
-        '0;JMP',
-        # Set D (the result) to -1 (true).
-        '(ARITHMETIC_TRUE_' + str(index) + ')',
-        '@0',
-        'D=!A',
-        # The end of this code block.
-        '(ARITHMETIC_END_' + str(index) + ')',
-    ]
-    return pre + middle + post
+    preJump = _preJump(index)
+    postJump = _postJump(index)
+    middle = ['D;JEQ']
+    return pre + preJump + middle + postJump + post
 
 
 def _neg():
