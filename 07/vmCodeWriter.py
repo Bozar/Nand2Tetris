@@ -20,6 +20,8 @@ def translateVMCommand(text):
     for t in text:
         if t[0] == 'C_PUSH':
             asmCommand += _push(t[1], t[2])
+        elif t[0] == 'C_POP':
+            asmCommand += _pop(t[1], t[2])
         elif t[0] == 'C_ARITHMETIC':
             if t[1] in requireJump:
                 asmCommand += arithmeticFunction[t[1]](index)
@@ -175,19 +177,91 @@ def _add():
 
 
 def _push(arg1, arg2):
+    pre = []
+    post = _pushDtoStack()
+    middle = ['D=M']
+
     if arg1 == 'constant':
-        return [
-            # Store data into register D.
+        middle = [
             '@' + arg2,
             'D=A',
-            # Copy data from register D to stack.
-            '@SP',
-            'A=M',
-            'M=D',
-            # Increase stack point by 1.
-            '@SP',
-            'M=M+1',
         ]
+    elif arg1 == 'local' or arg1 == 'argument' \
+            or arg1 == 'this' or arg1 == 'that':
+        pre = _getAddressType1(arg1, arg2)
+    elif arg1 == 'pointer' or arg1 == 'temp':
+        pre = _getAddressType2(arg1, arg2)
+
+    return pre + middle + post
+
+
+def _pop(arg1, arg2):
+    pre = _popToD()
+    post = ['M=D']
+    middle = []
+
+    if arg1 == 'local' or arg1 == 'argument' \
+            or arg1 == 'this' or arg1 == 'that':
+        middle = _getAddressType1(arg1, arg2)
+    elif arg1 == 'pointer' or arg1 == 'temp':
+        middle = _getAddressType2(arg1, arg2)
+
+    return pre + middle + post
+
+
+# Store address data into register A.
+def _getAddressType1(segment, index):
+    seg2Reg = {
+        'local': 'LCL',
+        'argument': 'ARG',
+        'this': 'THIS',
+        'that': 'THAT'
+    }
+    return [
+        # Copy data from register D to R13.
+        '@R13',
+        'M=D',
+        # Get address and store it into register D.
+        '@' + seg2Reg[segment],
+        'D=M',
+        '@' + index,
+        'D=D+A',
+        # Copy address from register D to R14.
+        '@R14',
+        'M=D',
+        # Copy data from register R13 to D.
+        '@R13',
+        'D=M',
+        # Copy address from register R14 to A.
+        '@R14',
+        'A=M',
+    ]
+
+
+def _getAddressType2(segment, index):
+    seg2Reg = {
+        'pointer': '3',
+        'temp': '5',
+    }
+    return [
+        # Copy data from register D to R13.
+        '@R13',
+        'M=D',
+        # Get address and store it into register D.
+        '@' + seg2Reg[segment],
+        'D=A',
+        '@' + index,
+        'D=D+A',
+        # Copy address from register D to R14.
+        '@R14',
+        'M=D',
+        # Copy data from register R13 to D.
+        '@R13',
+        'D=M',
+        # Copy address from register R14 to A.
+        '@R14',
+        'A=M',
+    ]
 
 
 def _setEndlessLoop():
