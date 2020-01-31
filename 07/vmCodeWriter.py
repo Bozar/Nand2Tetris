@@ -1,4 +1,4 @@
-def translateVMCommand(text):
+def translateVMCommand(text, symbol):
     stackPoint = '256'
     index = 0
     asmCommand = []
@@ -19,9 +19,9 @@ def translateVMCommand(text):
 
     for t in text:
         if t[0] == 'C_PUSH':
-            asmCommand += _push(t[1], t[2])
+            asmCommand += _push(t[1], t[2], symbol)
         elif t[0] == 'C_POP':
-            asmCommand += _pop(t[1], t[2])
+            asmCommand += _pop(t[1], t[2], symbol)
         elif t[0] == 'C_ARITHMETIC':
             if t[1] in requireJump:
                 asmCommand += arithmeticFunction[t[1]](index)
@@ -176,7 +176,7 @@ def _add():
     return pre + middle + post
 
 
-def _push(arg1, arg2):
+def _push(arg1, arg2, symbol):
     pre = []
     post = _pushDtoStack()
     middle = ['D=M']
@@ -191,11 +191,13 @@ def _push(arg1, arg2):
         pre = _getAddressType1(arg1, arg2)
     elif arg1 == 'pointer' or arg1 == 'temp':
         pre = _getAddressType2(arg1, arg2)
+    elif arg1 == 'static':
+        pre = _getAddressType3(arg1, arg2, symbol)
 
     return pre + middle + post
 
 
-def _pop(arg1, arg2):
+def _pop(arg1, arg2, symbol):
     pre = _popToD()
     post = ['M=D']
     middle = []
@@ -205,6 +207,8 @@ def _pop(arg1, arg2):
         middle = _getAddressType1(arg1, arg2)
     elif arg1 == 'pointer' or arg1 == 'temp':
         middle = _getAddressType2(arg1, arg2)
+    elif arg1 == 'static':
+        middle = _getAddressType3(arg1, arg2, symbol)
 
     return pre + middle + post
 
@@ -252,6 +256,26 @@ def _getAddressType2(segment, index):
         'D=A',
         '@' + index,
         'D=D+A',
+        # Copy address from register D to R14.
+        '@R14',
+        'M=D',
+        # Copy data from register R13 to D.
+        '@R13',
+        'D=M',
+        # Copy address from register R14 to A.
+        '@R14',
+        'A=M',
+    ]
+
+
+def _getAddressType3(segment, index, symbol):
+    return [
+        # Copy data from register D to R13.
+        '@R13',
+        'M=D',
+        # Get address and store it into register D.
+        '@' + symbol + '.' + index,
+        'D=A',
         # Copy address from register D to R14.
         '@R14',
         'M=D',
