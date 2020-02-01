@@ -40,19 +40,13 @@ def _getArg1(commandType, fullCommand):
 
 
 def _getCommandType(command):
-    typePush = 'C_PUSH'
-    typePop = 'C_POP'
-    typeArithmetic = 'C_ARITHMETIC'
+    reg2type = {
+        'push': 'C_PUSH',
+        'pop': 'C_POP',
+        'add|sub|neg|eq|gt|lt|and|or|not': 'C_ARITHMETIC',
+    }
 
-    regPush = 'push'
-    regPop = 'pop'
-    regArithmetic = 'add|sub|neg|eq|gt|lt|and|or|not'
-
-    if re.search(regPush, command) != None:
-        return typePush
-    elif re.search(regPop, command) != None:
-        return typePop
-    elif re.search(regArithmetic, command) != None:
-        return typeArithmetic
-    else:
-        return None
+    for reg in reg2type.keys():
+        if re.search(reg, command) != None:
+            return reg2type[reg]
+    return None
