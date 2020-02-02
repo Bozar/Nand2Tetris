@@ -41,9 +41,15 @@ def _getArg1(commandType, fullCommand):
 
 def _getCommandType(command):
     reg2type = {
-        'push': 'C_PUSH',
-        'pop': 'C_POP',
-        'add|sub|neg|eq|gt|lt|and|or|not': 'C_ARITHMETIC',
+        '^push': 'C_PUSH',
+        '^pop': 'C_POP',
+        '^(add|sub|neg|eq|gt|lt|and|or|not)': 'C_ARITHMETIC',
+        '^label': 'C_LABEL',
+        '^goto': 'C_GOTO',
+        '^if-goto': 'C_IF',
+        '^function': 'C_FUNCTION',
+        '^call': 'C_CALL',
+        '^return': 'C_RETURN',
     }
 
     for reg in reg2type.keys():
