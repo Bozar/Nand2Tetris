@@ -1,4 +1,5 @@
 import vmArithmetic
+import vmProgramFlow
 import vmPushPop
 
 
@@ -18,6 +19,12 @@ def translateVMCommand(text, symbol):
             tmpOutput = _getArithmeticCode(t[1], index)
             asmCommand += tmpOutput[0]
             index = tmpOutput[1]
+        elif t[0] == 'C_LABEL':
+            asmCommand += vmProgramFlow.writeLabel(t[1])
+        elif t[0] == 'C_GOTO':
+            asmCommand += vmProgramFlow.writeGoto(t[1])
+        elif t[0] == 'C_IF':
+            asmCommand += vmProgramFlow.writeIf(t[1])
 
     asmCommand += _setEndlessLoop()
 
