@@ -1,23 +1,23 @@
 import asmPushPop
 
 
-def writeLabel(label):
+def writeLabel(label, functionName):
     return [
-        '(' + label + ')',
+        '(' + functionName + '$' + label + ')',
     ]
 
 
-def writeGoto(label):
+def writeGoto(label, functionName):
     return [
-        '@' + label,
+        '@' + functionName + '$' + label,
         '0;JMP',
     ]
 
 
-def writeIf(label):
+def writeIf(label, functionName):
     pre = asmPushPop.popToD()
     middle = [
-        '@' + label,
+        '@' + functionName + '$' + label,
         'D;JNE',
     ]
 

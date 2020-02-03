@@ -6,6 +6,7 @@ import vmPushPop
 def translateVMCommand(text, symbol):
     stackPoint = '256'
     index = 0
+    functionName = ''
     asmCommand = []
     asmCommand += _setStackPoint(stackPoint)
     tmpOutput = ()
@@ -20,11 +21,11 @@ def translateVMCommand(text, symbol):
             asmCommand += tmpOutput[0]
             index = tmpOutput[1]
         elif t[0] == 'C_LABEL':
-            asmCommand += vmProgramFlow.writeLabel(t[1])
+            asmCommand += vmProgramFlow.writeLabel(t[1], functionName)
         elif t[0] == 'C_GOTO':
-            asmCommand += vmProgramFlow.writeGoto(t[1])
+            asmCommand += vmProgramFlow.writeGoto(t[1], functionName)
         elif t[0] == 'C_IF':
-            asmCommand += vmProgramFlow.writeIf(t[1])
+            asmCommand += vmProgramFlow.writeIf(t[1], functionName)
 
     asmCommand += _setEndlessLoop()
 
