@@ -2,6 +2,7 @@ import asmAddress
 import asmPushPop
 
 
+# Symbol is used as part of the label for static data.
 def push(arg1, arg2, symbol):
     pre = []
     post = asmPushPop.pushDtoStack()
