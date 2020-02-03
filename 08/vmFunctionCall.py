@@ -69,6 +69,7 @@ def writeReturn():
     return part1 + part2 + part3
 
 
+# http://nand2tetris-questions-and-answers-forum.32033.n3.nabble.com/Function-command-implementation-td4031726.html
 def writeFunction(functionName, numLocals):
     label = ['(' + functionName + ')']
     repeat = []
