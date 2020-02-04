@@ -1,8 +1,69 @@
+import asmPushPop
 import vmPushPop
 
 
+# NOTE: This function does not work properly.
 def writeCall(functionName, numArgs):
-    return []
+    returnAddress = 'RETURN_ADDRESS$' + functionName
+    pushRegD = asmPushPop.pushDtoStack()
+    # push return-address
+    part1 = [
+        '@' + returnAddress,
+        'D=A',
+        # pushRegD,
+    ]
+    # push LCL
+    part2 = [
+        '@LCL',
+        'D=M',
+        # pushRegD,
+    ]
+    # push ARG
+    part3 = [
+        '@ARG',
+        'D=M',
+        # pushRegD,
+    ]
+    # push THIS
+    part4 = [
+        '@THIS',
+        'D=M',
+        # pushRegD,
+    ]
+    # push THAT
+    part5 = [
+        '@THAT',
+        'D=M',
+        # pushRegD,
+    ]
+    part6 = [
+        # ARG = SP-n-5
+        '@SP',
+        'D=M',
+        '@' + numArgs,
+        'D=D-A',
+        '@5',
+        'D=D-A',
+        '@ARG',
+        'M=D',
+        # LCL = SP
+        '@SP',
+        'D=M',
+        '@LCL',
+        'M=D',
+        # goto f
+        '@' + functionName,
+        '0;JMP',
+        # (return-address)
+        '(' + returnAddress + ')',
+    ]
+    return\
+        part1 + pushRegD +\
+        part2 + pushRegD +\
+        part3 + pushRegD +\
+        part4 + pushRegD +\
+        part5 + pushRegD +\
+        part6
 
 
 # Avoid using public registers: R13, R14 and R15. Other scripts might use them

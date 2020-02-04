@@ -9,7 +9,9 @@ def translateVMCommand(text, symbol):
     index = 0
     functionName = ''
     asmCommand = []
-    asmCommand += _setStackPoint(stackPoint)
+    # asmCommand += _setStackPoint(stackPoint)
+    # NOTE: Move _init() to a separate file later.
+    # asmCommand += _init()
     tmpOutput = ()
 
     for t in text:
@@ -36,7 +38,7 @@ def translateVMCommand(text, symbol):
             asmCommand += vmFunctionCall.writeReturn()
             functionName = ''
 
-    asmCommand += _setEndlessLoop()
+    # asmCommand += _setEndlessLoop()
 
     return asmCommand
 
@@ -76,3 +78,15 @@ def _setStackPoint(stackPoint):
         '@SP',
         'M=D',
     ]
+
+
+def _init():
+    sp = [
+        '@256',
+        'D=A',
+        '@SP',
+        'M=D',
+    ]
+    call = vmFunctionCall.writeCall('Sys.init', '0')
+
+    return sp + call
