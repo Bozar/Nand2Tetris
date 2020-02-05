@@ -33,7 +33,8 @@ def translateVMCommand(text, symbol):
             asmCommand += vmFunctionCall.writeFunction(t[1], t[2])
             functionName = t[1]
         elif t[0] == 'C_CALL':
-            asmCommand += vmFunctionCall.writeCall(t[1], t[2])
+            asmCommand += vmFunctionCall.writeCall(t[1], t[2], index)
+            index += 1
         elif t[0] == 'C_RETURN':
             asmCommand += vmFunctionCall.writeReturn()
             functionName = ''

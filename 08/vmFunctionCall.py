@@ -2,9 +2,10 @@ import asmPushPop
 import vmPushPop
 
 
-# NOTE: This function does not work properly.
-def writeCall(functionName, numArgs):
-    returnAddress = 'RETURN_ADDRESS$' + functionName
+# Use the following trick to set breakpoints for debugging.
+# http://nand2tetris-questions-and-answers-forum.32033.n3.nabble.com/Tip-debugging-trick-that-helped-me-td3662340.html
+def writeCall(functionName, numArgs, index):
+    returnAddress = 'RETURN_ADDRESS$' + functionName + '$' + str(index)
     pushRegD = asmPushPop.pushDtoStack()
     # push return-address
     part1 = [
@@ -51,6 +52,12 @@ def writeCall(functionName, numArgs):
         'D=M',
         '@LCL',
         'M=D',
+
+        # Set a breakpoint for debugging.
+        # '@1000',
+        # 'M=1',
+        # 'M=0',
+
         # goto f
         '@' + functionName,
         '0;JMP',
@@ -81,6 +88,8 @@ def writeReturn():
         'D=A',
         '@TEMP_SAVE_FRAME',
         'D=M-D',
+        'A=D',
+        'D=M',
         '@TEMP_SAVE_RET_ADDRESS',
         'M=D',
     ]
@@ -122,6 +131,12 @@ def writeReturn():
         'D=M',
         '@LCL',
         'M=D',
+
+        # Set a breakpoint for debugging.
+        # '@1001',
+        # 'M=1',
+        # 'M=0',
+
         # goto RET
         '@TEMP_SAVE_RET_ADDRESS',
         'A=M',
