@@ -18,17 +18,24 @@ def main():
     partialName = os.path.basename(os.path.normpath(folder))
     targetFile = partialName + '.' + targetExtension
 
-    # Read a source file.
+    fileList = readWriteFile.getFileNames(folder, sourceExtension)
     text = []
-    text = readWriteFile.readFilesInFolder(folder, sourceExtension)
-    # Remove comments, spaces and blank lines.
-    text = preProcess.formatText(text)
-    # Parse file.
-    text = vmParser.parseVMfile(text)
-    # Translate command.
-    text = vmCodeWriter.translateVMCommand(text, partialName)
+    asmCode = []
+
+    # http://nand2tetris-questions-and-answers-forum.32033.n3.nabble.com/One-failed-comparison-with-FibonacciElement-and-StaticsTest-td4031823.html
+    for f in fileList:
+        # Read a source file.
+        text = readWriteFile.readFile(folder, f)
+        # Remove comments, spaces and blank lines.
+        text = preProcess.formatText(text)
+        # Parse file.
+        text = vmParser.parseVMfile(text)
+        # Translate command.
+        text = vmCodeWriter.translateVMCommand(text, f)
+        asmCode += text
+
     # Write to a target file.
-    readWriteFile.writeFile(folder, targetFile, text)
+    readWriteFile.writeFile(folder, targetFile, asmCode)
 
 
 main()

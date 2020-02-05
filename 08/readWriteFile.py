@@ -32,3 +32,14 @@ def readFilesInFolder(folder, extension):
         if regExt.search(f) != None:
             mergedFile += readFile(folder, f)
     return mergedFile
+
+
+def getFileNames(folder, extension):
+    files = os.listdir(Path(sys.path[0], folder))
+    regExt = re.compile('\.' + extension + '$')
+    matchExtension = []
+
+    for f in files:
+        if regExt.search(f) != None:
+            matchExtension.append(f)
+    return matchExtension
