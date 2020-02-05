@@ -4,6 +4,7 @@ import sys
 
 import preProcess
 import readWriteFile
+import vmBootstrap
 import vmCodeWriter
 import vmParser
 
@@ -21,6 +22,7 @@ def main():
     fileList = readWriteFile.getFileNames(folder, sourceExtension)
     text = []
     asmCode = []
+    asmCode += vmBootstrap.writeInit()
 
     # http://nand2tetris-questions-and-answers-forum.32033.n3.nabble.com/One-failed-comparison-with-FibonacciElement-and-StaticsTest-td4031823.html
     for f in fileList:
