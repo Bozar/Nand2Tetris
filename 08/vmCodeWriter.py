@@ -34,8 +34,9 @@ def translateVMCommand(text, symbol):
             index += 1
         elif t[0] == 'C_RETURN':
             asmCommand += vmFunctionCall.writeReturn()
-            # ERROR: Do not reset functionName. It will cause a bug when calling
-            # functions recursively.
+            # ERROR: Do not reset functionName when translating `return`
+            # commands. It will cause a bug when there are more than one
+            # `return` inside a function.
             # functionName = ''
 
     return asmCommand
