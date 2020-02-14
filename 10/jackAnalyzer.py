@@ -9,17 +9,15 @@ import readWriteFile
 
 
 def main():
-    # Folder: tmp/.
     # Argument: source folder name.
     folder = sys.argv[1]
     sourceExtension = 'jack'
     targetExtension = 'xml'
     targetFile = ''
-
-    fileList = readWriteFile.getFileNames(folder, sourceExtension)
     text = []
 
-    # http://nand2tetris-questions-and-answers-forum.32033.n3.nabble.com/One-failed-comparison-with-FibonacciElement-and-StaticsTest-td4031823.html
+    fileList = readWriteFile.getFileNames(folder, sourceExtension)
+
     for f in fileList:
         # Read a source file.
         text = readWriteFile.readFile(folder, f)
