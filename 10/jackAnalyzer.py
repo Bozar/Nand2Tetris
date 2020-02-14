@@ -13,7 +13,7 @@ def main():
     # Argument: source folder name.
     folder = sys.argv[1]
     sourceExtension = 'jack'
-    targetExtension = 'vm'
+    targetExtension = 'xml'
     targetFile = ''
 
     fileList = readWriteFile.getFileNames(folder, sourceExtension)
