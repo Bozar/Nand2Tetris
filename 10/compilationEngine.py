@@ -1,6 +1,8 @@
 import re
 
+import dataTag
 import handleXML
+from dataTag import tokenType
 
 
 def compile(text):
@@ -9,8 +11,8 @@ def compile(text):
     return output
 
 
-def _isSemiColon(char):
-    return char == ';'
+def _isSemiColon(text):
+    return text == handleXML.writeLine(tokenType.SYMBOL, ';')
 
 
 def _isClassVarDec(text):
@@ -26,15 +28,17 @@ def _isSubroutineDec(text):
 def _compileClassVarDec(text, index):
     labelStart = '<classVarDec>'
     labelEnd = '</classVarDec>'
+    indexStart = index
+    indexEnd = index
     output = [labelStart]
-    content = ''
 
-    while not _isSemiColon(content):
-        content = handleXML.getContent(text[index])
-        output += [content]
-        index += 1
-    output += [labelEnd]
-    index += 1
+    while not _isSemiColon(text[index]):
+        indexEnd += 1
+    indexEnd += 1
+
+    for i in range(indexStart, indexEnd):
+        output.append(text[index])
+    output.append(labelEnd)
 
     return (output, index)
 
@@ -47,24 +51,22 @@ def _compileClass(text):
     index = 1
     output = ['<class>']
     content = ''
-    textIndex = ()
+    listIndex = ()
 
     for i in range(index, index + 3):
-        output += [text[i]]
+        output.append(text[i])
     index += 3
 
     while index < len(text) - 2:
         content = handleXML.getContent(text[index])
         if _isClassVarDec(content):
-            textIndex = _compileClassVarDec(text, index)
-            output += textIndex[0]
-            index = textIndex[1]
+            listIndex = _compileClassVarDec(text, index)
+            output += listIndex[0]
+            index = listIndex[1]
         elif _isSubroutineDec(content):
-            textIndex = _compileSubroutine(text, index)
-            output += textIndex[0]
-            index = textIndex[1]
-
-    output += [text[index]]
-    output += ['</class>']
+            listIndex = _compileSubroutine(text, index)
+            output += listIndex[0]
+            index = listIndex[1]
+    output += [text[index], '</class>']
 
     return output
