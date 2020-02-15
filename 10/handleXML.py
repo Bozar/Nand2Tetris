@@ -14,6 +14,11 @@ def getContent(line):
     return re.sub(reg, r'\1', line)
 
 
+def getLabel(line):
+    reg = re.compile(r'^<(.+)>.*</.+>$')
+    return re.sub(reg, r'\1', line)
+
+
 def _convertSymbol(symbol):
     symbol2text = {
         '<': '&lt;',
