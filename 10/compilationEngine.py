@@ -54,7 +54,7 @@ def _compileClass(text):
     index += 3
 
     while index < len(text) - 2:
-        content = handleXML.getContent(text[index + 1])
+        content = handleXML.getContent(text[index])
         if _isClassVarDec(content):
             textIndex = _compileClassVarDec(text, index)
             output += textIndex[0]
