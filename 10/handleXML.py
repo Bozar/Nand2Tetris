@@ -1,3 +1,5 @@
+import re
+
 import dataTag
 
 
@@ -5,6 +7,11 @@ def writeLine(label, content):
     label = dataTag.getXMLtag(label)
     content = _convertSymbol(content)
     return '<' + label + '>' + content + '</' + label + '>'
+
+
+def getContent(line):
+    reg = re.compile(r'^<.+>(.*)</.+>$')
+    return re.sub(reg, r'\1', line)
 
 
 def _convertSymbol(symbol):

@@ -1,6 +1,6 @@
 import re
 
-import writeXML
+import handleXML
 from dataTag import tokenType
 
 
@@ -18,7 +18,7 @@ def tokenize(text):
             if isInsideString:
                 if _isDoubleQuote(char):
                     isInsideString = False
-                    cachedText = writeXML.writeLine(
+                    cachedText = handleXML.writeLine(
                         tokenType.STRING_CONST, cachedText)
                     output += [cachedText]
                     cachedText = ''
@@ -31,7 +31,7 @@ def tokenize(text):
                 if cachedText != None:
                     output += [cachedText]
                 if _isSymbol(char):
-                    cachedText = writeXML.writeLine(tokenType.SYMBOL, char)
+                    cachedText = handleXML.writeLine(tokenType.SYMBOL, char)
                     output += [cachedText]
                 cachedText = ''
             else:
@@ -43,11 +43,11 @@ def tokenize(text):
 
 def _tryParseToken(text):
     if _isKeyWord(text):
-        return writeXML.writeLine(tokenType.KEYWORD, text)
+        return handleXML.writeLine(tokenType.KEYWORD, text)
     elif _isInteger(text):
-        return writeXML.writeLine(tokenType.INT_CONST, text)
+        return handleXML.writeLine(tokenType.INT_CONST, text)
     elif _isIdentifier(text):
-        return writeXML.writeLine(tokenType.IDENTIFIER, text)
+        return handleXML.writeLine(tokenType.IDENTIFIER, text)
     else:
         return None
 
