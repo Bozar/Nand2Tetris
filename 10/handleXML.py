@@ -9,6 +9,12 @@ def writeLine(label, content):
     return '<' + label + '>' + content + '</' + label + '>'
 
 
+def writeLabelPairs(label):
+    labelStart = '<' + label + '>'
+    labelEnd = '</' + label + '>'
+    return [labelStart, labelEnd]
+
+
 def getContent(line):
     reg = re.compile(r'^<.+>(.*)</.+>$')
     return re.sub(reg, r'\1', line)
