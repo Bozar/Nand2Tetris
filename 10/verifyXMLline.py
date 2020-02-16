@@ -12,6 +12,10 @@ def isRightCurlyBracket(text):
     return text == handleXML.writeLine(tokenType.SYMBOL, '}')
 
 
+def isSemiColon(text):
+    return text == handleXML.writeLine(tokenType.SYMBOL, ';')
+
+
 def isClassVarDec(text):
     _static = handleXML.writeLine(
         tokenType.KEYWORD, dataTag.getXMLtag(keyWord.STATIC))
