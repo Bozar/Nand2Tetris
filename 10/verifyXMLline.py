@@ -4,6 +4,14 @@ from dataTag import tokenType
 from dataTag import keyWord
 
 
+def isLeftRoundBracket(text):
+    return text == handleXML.writeLine(tokenType.SYMBOL, '(')
+
+
+def isRightRoundBracket(text):
+    return text == handleXML.writeLine(tokenType.SYMBOL, ')')
+
+
 def isLeftCurlyBracket(text):
     return text == handleXML.writeLine(tokenType.SYMBOL, '{')
 
