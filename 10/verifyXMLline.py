@@ -1,7 +1,6 @@
 import dataTag
 import handleXML
-from dataTag import tokenType
-from dataTag import keyWord
+from dataTag import keyWord, tokenType
 
 
 def isLeftRoundBracket(text):
@@ -22,6 +21,26 @@ def isRightCurlyBracket(text):
 
 def isSemiColon(text):
     return text == handleXML.writeLine(tokenType.SYMBOL, ';')
+
+
+def isLetStatement(text):
+    return text == handleXML.writeLine(tokenType.KEYWORD, 'let')
+
+
+def isIfStatement(text):
+    return text == handleXML.writeLine(tokenType.KEYWORD, 'if')
+
+
+def isWhileStatement(text):
+    return text == handleXML.writeLine(tokenType.KEYWORD, 'while')
+
+
+def isDoStatement(text):
+    return text == handleXML.writeLine(tokenType.KEYWORD, 'do')
+
+
+def isReturnStatement(text):
+    return text == handleXML.writeLine(tokenType.KEYWORD, 'return')
 
 
 def isVarDec(text):
