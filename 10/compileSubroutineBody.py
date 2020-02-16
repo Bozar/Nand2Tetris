@@ -19,7 +19,7 @@ def compile2xml(text, index):
     # Add & move pointer: varDec* statements '}'.
     currentIndex += 1
     while not verifyXMLline.isRightCurlyBracket(text[currentIndex]):
-        # Add & move pointer: varDec*'.
+        # Add & move pointer: varDec*.
         if verifyXMLline.isVarDec(text[currentIndex]):
             listIndex = compileVarDec.compile2xml(text, currentIndex)
             output += listIndex[0]
