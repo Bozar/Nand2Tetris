@@ -24,6 +24,10 @@ def isSemiColon(text):
     return text == handleXML.writeLine(tokenType.SYMBOL, ';')
 
 
+def isVarDec(text):
+    return text == handleXML.writeLine(tokenType.KEYWORD, 'var')
+
+
 def isClassVarDec(text):
     _static = handleXML.writeLine(
         tokenType.KEYWORD, dataTag.getXMLtag(keyWord.STATIC))
