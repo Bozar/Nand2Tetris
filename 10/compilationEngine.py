@@ -34,6 +34,9 @@ def compile(text):
             listIndex = compileSubroutineDec.compile2xml(text, currentIndex)
             output += listIndex[0]
             currentIndex = listIndex[1]
+        # Move pointer.
+        else:
+            currentIndex += 1
 
     # Add: '}'.
     output.append(text[i])
